@@ -1,6 +1,9 @@
 install.packages("ggplot2")
+install.packages("fitdistrplus")
+
 
 library(ggplot2)
+library(fitdistrplus)
 
 # Ustawienie lokalizacij konsoli
 install.packages("rstudioapi")
@@ -123,5 +126,52 @@ ggsave(
   height = 9,
   units = "cm",
   dpi = 480
+)
+
+#-----------------------------------------
+# Estymacja parametrów rozkładu normalnego i t-studenta
+#-----------------------------------------
+
+dist_norm <- fitdist(log_zworty_nwg, "norm")
+dist_t <- fitdist(log_zworty_nwg, "t", start=list(df=12))
+
+curve(dt(x,dist_t$estimate), xlim=c(-4,4), col=2,lwd=2)
+
+
+dist_norm
+dist_t
+#-----------------------------------------
+# Wykresy diagnostyczne
+#-----------------------------------------
+
+par(mfrow=c(1,1))
+curve(dnorm(x,dist_norm$estimate[1],dist_norm$estimate[2]), xlim=c(-4,4),lwd=2)
+curve(dt(x,dist_t$estimate), add=T, col=2,lwd=2)
+
+key <- c("norm", "t-student")
+png(
+  "img/wykresy_diagnostyczne_nwg.png",
+  width = 18,
+  height = 18,
+  pointsize = 9,
+  units = "cm",
+  res = 480
+)
+par(mfrow = c(2, 2))
+denscomp(list(dist_norm, dist_t), legendtext = key)
+qqcomp(list(dist_norm, dist_t), legendtext = key)
+cdfcomp(list(dist_norm, dist_t), legendtext = key)
+ppcomp(list(dist_norm, dist_t), legendtext = key)
+
+dev.off()
+
+
+#-----------------------------------------
+# Analiza wartości statystyk
+#-----------------------------------------
+
+gofstat(
+  list(dist_norm, dist_t),
+  fitnames = key
 )
 
