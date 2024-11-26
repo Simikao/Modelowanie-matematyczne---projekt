@@ -175,3 +175,64 @@ gofstat(
   fitnames = key
 )
 
+
+#-----------------------------------------
+# Zad 5
+# Test hipotezy o równości rozkładów
+#-----------------------------------------
+
+iterations <- 10000
+n <- length(log_zworty_nwg)
+n
+
+D <- c()
+
+for (i in 1:iterations) {
+  y_ln <- rnorm(n, dist_norm$estimate[1], dist_norm$estimate[2])
+  D[i] <- ks.test(
+    y_ln,
+    pnorm,
+    dist_norm$estimate[1],
+    dist_norm$estimate[2],
+    exact = TRUE
+  )$statistic
+}
+
+# Obliczamy dn_ln, czyli wartosc statystyki D,
+# dla danych kurs_zamkniecia i rozkładu F0 wybranego w punkcie
+dn_n <- ks.test(
+  log_zworty_nwg,
+  pnorm,
+  dist_norm$estimate[1],
+  dist_norm$estimate[2],
+  exact = TRUE
+)$statistic
+
+dn_n
+
+png(
+  "img/hipoteza_o_rownosci_nwg.png",
+  width = 9,
+  height = 12,
+  pointsize = 9,
+  units = "cm",
+  res = 480
+)
+par(mfrow = c(1, 1))
+hist(D, prob = TRUE, xlab = "")
+points(dn_n, 0, pch = 19, col = "red")
+dev.off()
+
+
+# Odleglosc dystrybuanty empirycznej dla kurs_zamkniecia,
+# oraz dystrybuanty F0 jest istotnie większa od odleglosci obserwowanych
+# dla probek tej samej licznosci z rozkladu F0.
+
+p_value_n <- length(D[D > dn_n]) / iterations
+p_value_n
+
+
+alfa <- c(0.05)
+p_value_n <= alfa
+# Wartosc p-value jest mniejsza od przyjetego poziomu istotnosci, zatem
+# hipoteze o rownosci dystrybuant (F = F0, gdzie F poszukiwany rozklad) odrzucam.
