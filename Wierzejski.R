@@ -79,18 +79,18 @@ ggsave(
 #-----------------------------------------
 
 
-log_zworty_nwg <- diff(log(kurs_zamkniecia))
+log_zwroty_nwg <- diff(log(kurs_zamkniecia))
 
 # Przycięcie pierwszego elementu kurs_data
 kurs_data_cut <- kurs_data[-1]
 
-log_zworty_nwgdf <- data.frame(data = kurs_data_cut, log_zwroty= log_zworty_nwg)
+log_zwroty_nwgdf <- data.frame(data = kurs_data_cut, log_zwroty= log_zwroty_nwg)
 
 ?hist
 
 
 histogram_zwrotów_ggplot <- ggplot(
-  log_zworty_nwgdf,
+  log_zwroty_nwgdf,
   aes(x = log_zwroty, y = after_stat(density))
 ) +
   geom_histogram(fill = "grey", color = "black") +
@@ -98,7 +98,7 @@ histogram_zwrotów_ggplot <- ggplot(
 
 histogram_zwrotów_ggplot
 
-wykres_zwrotów <- ggplot(log_zworty_nwgdf, aes(x = data, y = log_zwroty, group = 1)) +
+wykres_zwrotów <- ggplot(log_zwroty_nwgdf, aes(x = data, y = log_zwroty, group = 1)) +
   geom_line(color = "blue") +
   labs(x = NULL, y = "log-zwroty (%)") +
   scale_x_date(
@@ -132,8 +132,8 @@ ggsave(
 # Estymacja parametrów rozkładu normalnego i t-studenta
 #-----------------------------------------
 
-dist_norm <- fitdist(log_zworty_nwg, "norm")
-dist_t <- fitdist(log_zworty_nwg, "t", start=list(df=12))
+dist_norm <- fitdist(log_zwroty_nwg, "norm")
+dist_t <- fitdist(log_zwroty_nwg, "t", start=list(df=12))
 
 curve(dt(x,dist_t$estimate), xlim=c(-4,4), col=2,lwd=2)
 
@@ -182,7 +182,7 @@ gofstat(
 #-----------------------------------------
 
 iterations <- 10000
-n <- length(log_zworty_nwg)
+n <- length(log_zwroty_nwg)
 n
 
 D <- c()
@@ -201,7 +201,7 @@ for (i in 1:iterations) {
 # Obliczamy dn_ln, czyli wartosc statystyki D,
 # dla danych kurs_zamkniecia i rozkładu F0 wybranego w punkcie
 dn_n <- ks.test(
-  log_zworty_nwg,
+  log_zwroty_nwg,
   pnorm,
   dist_norm$estimate[1],
   dist_norm$estimate[2],
