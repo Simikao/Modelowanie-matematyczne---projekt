@@ -204,38 +204,81 @@ ggsave(
 # Estymacja kwantyli 0.05, 0.5, 0.95
 #-----------------------------------------
 # Wartość oczekiwana
-mu <- mean(log_zwroty_nwg)
+mu_nwg <- mean(log_zwroty_nwg)
 
 # Wariancja
-variance <- var(log_zwroty_nwg)
+variance_nwg <- var(log_zwroty_nwg)
 
 # Odchylenie standardowe
-std_dev <- sqrt(variance)
+std_dev_nwg <- sqrt(variance_nwg)
 
 # Kwantyle
-quantiles <- quantile(log_zwroty_nwg, probs = c(0.05, 0.5, 0.95))
+quantiles_nwg <- quantile(log_zwroty_nwg, probs = c(0.05, 0.5, 0.95))
 
+mu_nwg
+variance_nwg
+std_dev_nwg
+quantiles_nwg
 
 
 # Tworzenie histogramu z naniesionymi liniami dla średniej i kwantyli
-ggplot(log_zwroty_nwgdf, aes(x = log_zwroty_nwg)) +
+wykres_kwantyli_nwg <- ggplot(log_zwroty_nwg_df, aes(x = log_zwroty_nwg)) +
   geom_histogram(binwidth = 0.01, fill = "grey", color = "black", alpha = 0.7) + # Histogram
-  geom_vline(aes(xintercept = mu, color = "Średnia"), linetype = "dashed", size = 1) + # Średnia
-  geom_vline(aes(xintercept = quantiles[1], color = "Kwantyl 5%"), linetype = "dotted", size = 1) + # Kwantyl 5%
-  geom_vline(aes(xintercept = quantiles[2], color = "Mediana"), linetype = "dotted", size = 1) + # Mediana
-  geom_vline(aes(xintercept = quantiles[3], color = "Kwantyl 95%"), linetype = "dotted", size = 1) + # Kwantyl 95%
+  geom_vline(aes(xintercept = mu_nwg, color = "Średnia"), linetype = "dashed", size = 1) + # Średnia
+  geom_vline(aes(xintercept = quantiles_nwg[1], color = "Kwantyl 5%"), linetype = "dotted", size = 1) + # Kwantyl 5%
+  geom_vline(aes(xintercept = quantiles_nwg[2], color = "Mediana"), linetype = "dotted", size = 1) + # Mediana
+  geom_vline(aes(xintercept = quantiles_nwg[3], color = "Kwantyl 95%"), linetype = "dotted", size = 1) + # Kwantyl 95%
   scale_color_manual(name = "Legenda", 
                      values = c("Średnia" = "red", 
                                 "Kwantyl 5%" = "blue", 
                                 "Mediana" = "green", 
                                 "Kwantyl 95%" = "orange")) + # Kolory i etykiety legendy
-  labs(title = "Histogram Log-Zwrotów", x = "Log-Zwroty", y = "Częstość") + # Tytuły osi i wykresu
+  labs(title = NULL, x = "Log-Zwroty", y = "Gęstość") + # Tytuły osi i wykresu
   theme_minimal() + # Minimalny styl wykresu
   theme(legend.position = "top") # Ustawienie legendy na górze
 
+wykres_kwantyli_nwg
+
 ggsave(
   "img/estymacja_kwantyli_nwg.png",
-  plot = wykres_zwrotów,
+  plot = wykres_kwantyli_nwg,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
+
+
+#-----------------------------------------
+# Esytmacjia dystrybuanty empirycznej
+#-----------------------------------------
+
+# Estymacja dystrybuanty empirycznej
+dystrybuanta_empiryczna <- ecdf(log_zwroty_nwg)
+
+# Wartości x dla wykresu
+x_wartosci <- seq(min(log_zwroty_nwg), max(log_zwroty_nwg), length.out = 100)
+
+# Wartości dystrybuanty empirycznej
+F_empiryczna <- dystrybuanta_empiryczna(x_wartosci)
+
+temp_df <- data.frame(x = x_wartosci, F = F_empiryczna)
+
+dystrybuanta_empiryczna_nwg <- ggplot(temp_df, aes(x = x, y = F)) +
+  geom_line(color = "blue", size = 1) +
+  labs(
+    title = NULL,
+    x = "Log-Zwroty",
+    y = "Dystrybuanta Empiryczna F(x)"
+  ) +
+  theme_minimal()
+
+dystrybuanta_empiryczna_nwg
+
+ggsave(
+  "img/dystrybuanta_empiryczna_nwg.png",
+  plot = dystrybuanta_empiryczna_nwg,
   width = 12,
   height = 9,
   units = "cm",
