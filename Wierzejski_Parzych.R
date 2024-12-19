@@ -129,6 +129,48 @@ ggsave(
 )
 
 #-----------------------------------------
+# Estymacja kwantyli 0.05, 0.5, 0.95
+#-----------------------------------------
+# Wartość oczekiwana
+mu <- mean(log_zwroty_nwg)
+
+# Wariancja
+variance <- var(log_zwroty_nwg)
+
+# Odchylenie standardowe
+std_dev <- sqrt(variance)
+
+# Kwantyle
+quantiles <- quantile(log_zwroty_nwg, probs = c(0.05, 0.5, 0.95))
+
+
+
+# Tworzenie histogramu z naniesionymi liniami dla średniej i kwantyli
+ggplot(log_zwroty_nwgdf, aes(x = log_zwroty_nwg)) +
+  geom_histogram(binwidth = 0.01, fill = "grey", color = "black", alpha = 0.7) + # Histogram
+  geom_vline(aes(xintercept = mu, color = "Średnia"), linetype = "dashed", size = 1) + # Średnia
+  geom_vline(aes(xintercept = quantiles[1], color = "Kwantyl 5%"), linetype = "dotted", size = 1) + # Kwantyl 5%
+  geom_vline(aes(xintercept = quantiles[2], color = "Mediana"), linetype = "dotted", size = 1) + # Mediana
+  geom_vline(aes(xintercept = quantiles[3], color = "Kwantyl 95%"), linetype = "dotted", size = 1) + # Kwantyl 95%
+  scale_color_manual(name = "Legenda", 
+                     values = c("Średnia" = "red", 
+                                "Kwantyl 5%" = "blue", 
+                                "Mediana" = "green", 
+                                "Kwantyl 95%" = "orange")) + # Kolory i etykiety legendy
+  labs(title = "Histogram Log-Zwrotów", x = "Log-Zwroty", y = "Częstość") + # Tytuły osi i wykresu
+  theme_minimal() + # Minimalny styl wykresu
+  theme(legend.position = "top") # Ustawienie legendy na górze
+
+ggsave(
+  "img/estymacja_kwantyli_nwg.png",
+  plot = wykres_zwrotów,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
+#-----------------------------------------
 # Estymacja parametrów rozkładu normalnego i t-studenta
 #-----------------------------------------
 
