@@ -1,15 +1,13 @@
-install.packages("ggplot2")
-install.packages("fitdistrplus")
-
-
-library(ggplot2)
-library(fitdistrplus)
-
 # Ustawienie lokalizacij konsoli
 install.packages("rstudioapi")
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 getwd()
 
+install.packages("ggplot2")
+install.packages("fitdistrplus")
+
+library(ggplot2)
+library(fitdistrplus)
 
 
 #-----------------------------------------
@@ -20,16 +18,24 @@ getwd()
 
 nwg <- read.csv("nwg_d.csv")
 
-kurs_zamkniecia <- nwg$Zamkniecie
-kurs_data <- as.Date(nwg$Data)
+kurs_zamkniecia_nwg <- nwg$Zamkniecie
+kurs_data_nwg <- as.Date(nwg$Data)
 
-nwgf <- data.frame(data = kurs_data, zamkniecie = kurs_zamkniecia)
+nwgf <- data.frame(data = kurs_data_nwg, zamkniecie = kurs_zamkniecia_nwg)
+
+dyna <- read.csv("dt_us_d.csv")
+
+kurs_zamkniecia_dyn <- dyna$Zamkniecie
+kurs_data_dyn <- as.Date(dyna$Data)
+
+dynf <- data.frame(data = kurs_data_dyn, zamkniecie = kurs_zamkniecia_dyn)
+
 
 #-----------------------------------------
 # Wykres zamknięcia
 #-----------------------------------------
 
-wykres_kursu <- ggplot(nwgf, aes(x = data, y = zamkniecie, group = 1)) +
+wykres_kursu_nwg <- ggplot(nwgf, aes(x = data, y = zamkniecie, group = 1)) +
   geom_line(color = "blue") +
   labs(x = NULL, y = "Cena zamknięcia (zł)") +
   scale_x_date(
@@ -39,11 +45,32 @@ wykres_kursu <- ggplot(nwgf, aes(x = data, y = zamkniecie, group = 1)) +
   ) +
   theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1))
 
-wykres_kursu
+wykres_kursu_nwg
 
 ggsave(
   "img/Wykres_cen_akcji_nwg.png",
-  plot = wykres_kursu,
+  plot = wykres_kursu_nwg,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
+wykres_kursu_dyn <- ggplot(dynf, aes(x = data, y = zamkniecie, group = 1)) +
+  geom_line(color = "blue") +
+  labs(x = NULL, y = "Cena zamknięcia (zł)") +
+  scale_x_date(
+    date_breaks = "1 month",
+    date_labels = "%b %Y",
+    limits = c(min(dynf$data), max(dynf$data))
+  ) +
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1))
+
+wykres_kursu_dyn
+
+ggsave(
+  "img/Wykres_cen_akcji_dt.png",
+  plot = wykres_kursu_dyn,
   width = 12,
   height = 9,
   units = "cm",
@@ -54,20 +81,40 @@ ggsave(
 # Histogram kursów zamknięcia
 #-----------------------------------------
 
-histogram_kursu_ggplot <- ggplot(
+histogram_kursu_ggplot_nwg <- ggplot(
   nwgf,
   aes(x = zamkniecie, y = after_stat(density))
 ) +
   geom_histogram(binwidth = 1, fill = "grey", color = "black") +
   labs(title = NULL, x = "Cena zamknięcia (zł)", y = "Gęstość")
 
-hist(kurs_zamkniecia, prob = TRUE, xlab = "Zamknięcie", ylab = "Gęstość")
+# hist(kurs_zamkniecia_nwg, prob = TRUE, xlab = "Zamknięcie", ylab = "Gęstość", main = "")
 
-histogram_kursu_ggplot
+histogram_kursu_ggplot_nwg
 
 ggsave(
-  "img/historgram_nwg.png",
-  plot = histogram_kursu_ggplot,
+  "img/histogram_nwg.png",
+  plot = histogram_kursu_ggplot_nwg,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
+histogram_kursu_ggplot_dyn <- ggplot(
+  dynf,
+  aes(x = zamkniecie, y = after_stat(density))
+) +
+  geom_histogram(binwidth = 1, fill = "grey", color = "black") +
+  labs(title = NULL, x = "Cena zamknięcia (zł)", y = "Gęstość")
+
+# hist(kurs_zamkniecia_dyn, prob = TRUE, xlab = "Zamknięcie", ylab = "Gęstość", main = "")
+
+histogram_kursu_ggplot_dyn
+
+ggsave(
+  "img/histogram_dt.png",
+  plot = histogram_kursu_ggplot_dyn,
   width = 12,
   height = 9,
   units = "cm",
@@ -78,50 +125,75 @@ ggsave(
 # Log zwroty (stopy zwrotu)
 #-----------------------------------------
 
+log_zwroty_nwg <- diff(log(kurs_zamkniecia_nwg))
+log_zwroty_dyn <- diff(log(kurs_zamkniecia_dyn))
 
-log_zwroty_nwg <- diff(log(kurs_zamkniecia))
+# Przycięcie pierwszego elementu kurs_data_nwg
+kurs_data_cut_nwg <- kurs_data_nwg[-1]
 
-# Przycięcie pierwszego elementu kurs_data
-kurs_data_cut <- kurs_data[-1]
+log_zwroty_nwg_df <- data.frame(data = kurs_data_cut_nwg, log_zwroty = log_zwroty_nwg)
 
-log_zwroty_nwgdf <- data.frame(data = kurs_data_cut, log_zwroty = log_zwroty_nwg)
+# Przycięcie pierwszego elementu kurs_data_dyn
+kurs_data_cut_dt <- kurs_data_dyn[-1]
 
-?hist
+log_zwroty_dt_df <- data.frame(data = kurs_data_cut_dyn, log_zwroty = log_zwroty_dyn)
 
-
-histogram_zwrotów_ggplot <- ggplot(
-  log_zwroty_nwgdf,
+histogram_zwrotów_nwg_ggplot <- ggplot(
+  log_zwroty_nwg_df,
   aes(x = log_zwroty, y = after_stat(density))
 ) +
   geom_histogram(fill = "grey", color = "black") +
   labs(title = NULL, x = "log-zwroty (%)", y = "Gęstość")
 
-histogram_zwrotów_ggplot
+histogram_zwrotów_nwg_ggplot
 
-wykres_zwrotów <- ggplot(log_zwroty_nwgdf, aes(x = data, y = log_zwroty, group = 1)) +
+wykres_zwrotów_nwg <- ggplot(log_zwroty_nwg_df, aes(x = data, y = log_zwroty, group = 1)) +
   geom_line(color = "blue") +
   labs(x = NULL, y = "log-zwroty (%)") +
   scale_x_date(
     date_breaks = "1 month",
     date_labels = "%b %Y",
-    limits = c(min(kurs_data_cut), max(kurs_data_cut))
+    limits = c(min(kurs_data_cut_nwg), max(kurs_data_cut_nwg))
   ) +
   theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1))
 
-wykres_zwrotów
+wykres_zwrotów_nwg
 
 ggsave(
-  "img/historgram_zwrotów_nwg.png",
-  plot = histogram_zwrotów_ggplot,
+  "img/histogram_zwrotów_nwg.png",
+  plot = histogram_zwrotów_nwg_ggplot,
   width = 12,
   height = 9,
   units = "cm",
   dpi = 480
 )
 
+# dt
+
+histogram_zwrotów_dt_ggplot <- ggplot(
+  log_zwroty_dt_df,
+  aes(x = log_zwroty, y = after_stat(density))
+) +
+  geom_histogram(fill = "grey", color = "black") +
+  labs(title = NULL, x = "log-zwroty (%)", y = "Gęstość")
+
+histogram_zwrotów_dt_ggplot
+
+wykres_zwrotów_dt <- ggplot(log_zwroty_dt_df, aes(x = data, y = log_zwroty, group = 1)) +
+  geom_line(color = "blue") +
+  labs(x = NULL, y = "log-zwroty (%)") +
+  scale_x_date(
+    date_breaks = "1 month",
+    date_labels = "%b %Y",
+    limits = c(min(kurs_data_cut_dt), max(kurs_data_cut_dt))
+  ) +
+  theme(axis.text.x = element_text(angle = 50, vjust = 1, hjust = 1))
+
+wykres_zwrotów_dt
+
 ggsave(
-  "img/wykres_zwrotów_nwg.png",
-  plot = wykres_zwrotów,
+  "img/histogram_zwrotów_dt.png",
+  plot = histogram_zwrotów_dt_ggplot,
   width = 12,
   height = 9,
   units = "cm",
@@ -174,14 +246,27 @@ ggsave(
 # Estymacja parametrów rozkładu normalnego i t-studenta
 #-----------------------------------------
 
-dist_norm <- fitdist(log_zwroty_nwg, "norm")
-dist_t <- fitdist(log_zwroty_nwg, "t", start = list(df = 12))
+# nwg 
 
-curve(dt(x, dist_t$estimate), xlim = c(-4, 4), col = 2, lwd = 2)
+dist_norm_nwg <- fitdist(log_zwroty_nwg, "norm")
+dist_t_nwg <- fitdist(log_zwroty_nwg, "t", start = list(df = 12))
+
+curve(dt(x, dist_t_nwg$estimate), xlim = c(-4, 4), col = 2, lwd = 2)
+
+dist_norm_nwg
+dist_t_nwg
+
+# dt
+
+dist_norm_dt <- fitdist(log_zwroty_dt, "norm")
+dist_t_dt <- fitdist(log_zwroty_dt, "t", start = list(df = 12))
+
+curve(dt(x, dist_t_dt$estimate), xlim = c(-4, 4), col = 2, lwd = 2)
+
+dist_norm_dt
+dist_t_dt
 
 
-dist_norm
-dist_t
 #-----------------------------------------
 # Wykresy diagnostyczne
 #-----------------------------------------
@@ -242,7 +327,7 @@ for (i in 1:iterations) {
 }
 
 # Obliczamy dn_ln, czyli wartosc statystyki D,
-# dla danych kurs_zamkniecia i rozkładu F0 wybranego w punkcie
+# dla danych kurs_zamkniecia_nwg i rozkładu F0 wybranego w punkcie
 dn_n <- ks.test(
   log_zwroty_nwg,
   pnorm,
@@ -267,7 +352,7 @@ points(dn_n, 0, pch = 19, col = "red")
 dev.off()
 
 
-# Odleglosc dystrybuanty empirycznej dla kurs_zamkniecia,
+# Odleglosc dystrybuanty empirycznej dla kurs_zamkniecia_nwg,
 # oraz dystrybuanty F0 jest istotnie większa od odleglosci obserwowanych
 # dla probek tej samej licznosci z rozkladu F0.
 
@@ -282,35 +367,20 @@ p_value_n <= alfa
 
 
 
-#-----------------------------------------
-# !TODO: Put dynatrace here
-#-----------------------------------------
-
-dyna <- read.csv("dt_us_d.csv")
-
-kurs_zamkniecia_dyn <- dyna$Zamkniecie
-kurs_data_dyn <- as.Date(dyna$Data)
-
-log_zwroty_dyn <- diff(log(kurs_zamkniecia_dyn))
-
-# Przycięcie pierwszego elementu kurs_data
-kurs_data_cut_dyn <- kurs_data_dyn[-1]
-
-log_zwroty_dyndf <- data.frame(data = kurs_data_cut_dyn, log_zwroty = log_zwroty_dyn)
 
 
 #-----------------------------------------
 # Rozdział 2
-# Wykres rozrzutu z histogramami roskładów brzegowych
+# Wykres rozrzutu z histogramami rozkładów brzegowych
 #-----------------------------------------
 
 # Sprawdzanie czy daty w naszych spółkach się pokrywają
-identical(kurs_data, kurs_data_dyn)
-which(kurs_data != kurs_data_dyn) # bardzo się nie pokrywają
+identical(kurs_data_nwg, kurs_data_dyn)
+which(kurs_data_nwg != kurs_data_dyn) # bardzo się nie pokrywają
 
 
 # Rekreacja tabeli csv ale tylko z dwóch kolumn
-temp_nwg <- data.frame(kurs_zamkniecia, kurs_data)
+temp_nwg <- data.frame(kurs_zamkniecia_nwg, kurs_data_nwg)
 colnames(temp_nwg) <- c("kurs", "data")
 temp_dyn <- data.frame(kurs_zamkniecia_dyn, kurs_data_dyn)
 colnames(temp_dyn) <- c("kurs", "data")
