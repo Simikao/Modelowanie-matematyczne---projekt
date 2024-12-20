@@ -732,7 +732,7 @@ ggsave(
 png(
   "img/zwroty_gestosc_laczona.png",
   width = 9,
-  height = 12,
+  height = 9,
   pointsize = 9,
   units = "cm",
   res = 480
@@ -744,7 +744,7 @@ dev.off()
 png(
   "img/diff_gestosc_laczona_detailed.png",
   width = 9,
-  height = 12,
+  height = 9,
   pointsize = 9,
   units = "cm",
   res = 480
