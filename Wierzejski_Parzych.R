@@ -204,15 +204,12 @@ ggsave(
 # Estymacja kwantyli 0.05, 0.5, 0.95
 #-----------------------------------------
 # Wartość oczekiwana
-
 mu_nwg <- mean(log_zwroty_nwg)
 
 # Wariancja
 variance_nwg <- var(log_zwroty_nwg)
-variance_nwg <- var(log_zwroty_nwg)
 
 # Odchylenie standardowe
-std_dev_nwg <- sqrt(variance_nwg)
 std_dev_nwg <- sqrt(variance_nwg)
 
 # Kwantyle
