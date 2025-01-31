@@ -653,9 +653,12 @@ Sigma_ob
 P <- cor(merged_logi) # macierz korelacji
 P
 
-mala_sigma <- sqrt(Sigma[1, 1])
+mala_sigma1 <- sqrt(Sigma[1, 1])
+mala_sigma1
 
-mala_sigma
+mala_sigma2 <- sqrt(Sigma[2,2])
+mala_sigma2
+
 
 #-----------------------------------------
 # wykres gestosci
@@ -757,6 +760,52 @@ persp(x, y, z,
 )
 dev.off()
 
+probka_rozrzut <- MASS::mvrnorm(n, mu = mu, Sigma = Sigma)
+probka_rozrzut
+png(
+  "img/diff_wykresy_rozrzutu.png",
+  width = 12,
+  height = 9,
+  pointsize = 9,
+  units = "cm",
+  res = 480
+)
+par(mfrow = c(1, 2))
+plot(merged_logi, xlim = c(-0.15, 0.15), ylim = c(-0.10, 0.10))
+plot(probka_rozrzut, xlim = c(-0.15, 0.15), ylim = c(-0.10, 0.10))
+dev.off()
+
+
+png(
+  "img/diff_porownanie_wykresow_rozrzutu.png",
+  width = 12,
+  height = 9,
+  pointsize = 9,
+  units = "cm",
+  res = 480
+)
+par(mfrow = c(1, 1))
+plot(merged_logi,
+     xlim = c(-0.15, 0.15),
+     ylim = c(-0.10, 0.10),
+     col = "blue",
+     main = "Porównanie dwóch zbiorów danych",
+     xlab = "X",
+     ylab = "Y"
+)
+
+points(probka_rozrzut,
+       col = "black"
+)
+
+legend("topleft",
+       legend = c("Diff kursów", "Wygenerowana próbka"),
+       col = c("blue", "black"),
+       pch = 16,
+       cex = 0.8
+)
+dev.off()
+
 #-----------------------------------------
 # Rozdział 3
 # Przedziały ufności dla wartości oczekiwanej
@@ -807,6 +856,29 @@ CI_boot_dt
 #-----------------------------------------
 # Regresja liniowa
 #-----------------------------------------
+
+diff_df <- data.frame(diff_nwg = m_log_zwroty_nwg, diff_dyn = m_log_zwroty_dyn)
+
+
+diffs <- ggplot(diff_df, aes(x = diff_nwg, y = diff_dyn)) +
+  geom_point(colour = "blue", size = .6) +
+  ggtitle("Porównanie logarytmicznych zwrotów spółki NWG i DT.US") +
+  theme(plot.title = element_text(hjust = 0.5, size=10),
+        axis.title.x = element_text(size = 6),
+        axis.title.y = element_text(size = 6),
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5) )
+
+diffs
+ggsave(
+  "img/reg_porownanie.png",
+  plot = diffs,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
 
 # Model regresji liniowej
 model <- lm(m_log_zwroty_nwg ~ m_log_zwroty_dyn)
