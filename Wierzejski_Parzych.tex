@@ -1,0 +1,602 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[margin=.9in, footskip=.25in, bottom=0.5in]{geometry}
+
+\setlength{\abovecaptionskip}{-5pt plus 5pt minus 0pt}  
+
+%----------------------
+\def\\{\hfill\break}
+
+
+%----------------------
+\title{Projekt Egzaminacyjny}
+\author{Wierzejski Szymon, Parzych Hubert}
+\date{Listopad 2024 -- Styczeń 2025}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\vspace*{4cm}
+\section{Wstęp}
+
+\textbf{Newag (NWG)} to polskie przedsiębiorstwo z siedzibą w Nowym Sączu, specjalizujące się w produkcji, modernizacji oraz serwisowaniu pojazdów szynowych. Firma powstała w 1995 roku, kontynuując tradycje zakładów naprawczych działających w regionie od połowy XX wieku. Oferta Newagu obejmuje m.in. lokomotywy elektryczne i spalinowe, zespoły trakcyjne oraz tramwaje. Jednym z flagowych produktów spółki jest nowoczesny elektryczny zespół trakcyjny Impuls, wykorzystywany przez wielu przewoźników w Polsce. Spółka zadebiutowała na Giełdzie Papierów Wartościowych w Warszawie w 2013 roku, odgrywając ważną rolę w polskim sektorze transportu szynowego.
+
+\smallskip
+
+\textbf{Dynatrace (DT.US)} to amerykańska firma technologiczna z siedzibą w Waltham, Massachusetts, zajmująca się dostarczaniem rozwiązań do monitorowania aplikacji, infrastruktur chmurowych oraz zarządzania wydajnością IT. Założona w 2005 roku firma specjalizuje się w wykorzystaniu sztucznej inteligencji i automatyzacji, pomagając przedsiębiorstwom w optymalizacji działania ich systemów IT. Platforma Dynatrace wspiera analizę danych w czasie rzeczywistym, umożliwiając szybkie rozwiązywanie problemów oraz poprawę jakości usług. Spółka zadebiutowała na Nasdaq Stock Market w 2019 roku i od tego czasu dynamicznie rozwija swoją działalność, współpracując z globalnymi liderami różnych branż.
+
+\newpage
+
+\section {Analiza cen spółek}
+W ramach projektu egzaminacyjnego z modelowania matematycznego przeprowadzimy analizę cen akcji spółek Newag (NWG) oraz Dynatrace (DT.US). Analiza ta obejmie kolejno: statystyki opisowe, wykresy diagnostyczne oraz testowanie hipotezy o równości rozkładów cenowych obu spółek.
+
+\subsection{Spółka NWG}
+Rozpoczniemy od analizy cen akcji spółki NWG. Pierwszym krokiem będzie przyjrzenie się statystykom opisowym.
+
+\subsubsection{Wykres cen zamknięcia akcji i histogram}
+Poniżej znajdują się wykres kursów zamknięcia pokazujący zmiany w czasie oraz histogram gęstości dla cen spółki NWG
+
+\begin{figure}[h]
+\centering
+\begin{minipage}[b]{0.40\textwidth}
+\centering
+\includegraphics[width=\textwidth, height=5.2cm, width = 7cm]{Wykres_cen_akcji_nwg.png}
+\caption{Wykres cen zamknięcia akcji pokazujący zmiany w czasie - nwg}
+\label{fig:r3}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.40\textwidth}
+\centering
+\includegraphics[width=\textwidth, height=5.25cm, width = 7cm]{wykres_zwrotów_nwg.png}
+\caption{Wykres log-zwrotów cen zamknięcia - nwg}
+\label{fig:r4}
+\end{minipage}
+\end{figure}
+
+
+\subsubsection{Estymacja parametrów rozkładu log-zwrotów}
+
+Zakładamy, że log-zwroty \(r_1, r_2, \ldots, r_n\) są niezależnymi realizacjami zmiennej losowej \(X\), która ma wartość oczekiwaną \(\mu\), wariancję \(\sigma^2\) oraz dystrybuantę \(F\). W tym rozdziale przeprowadzamy estymację parametrów \(\mu\) i \(\sigma^2\) oraz analizę kwantyli rozkładu na podstawie danych log-zwrotów.
+
+\smallskip
+\textbf{Wartość oczekiwana}
+
+Wartość oczekiwana log-zwrotów, oznaczona jako \(\mu\), reprezentuje średnią zmianę cen akcji w badanym okresie. Estymator wartości oczekiwanej \(\hat{\mu}\) wyraża się wzorem:
+\[
+\hat{\mu} = \frac{1}{n} \sum_{i=1}^{n} r_i,
+\]
+gdzie \(n\) to liczba obserwacji, a \(r_i\) to log-zwrot w dniu \(i\). Wyestymowana wartość oczekiwana wynosi:  
+\[
+\hat{\mu} = 4.74849 \times 10^{-5}.
+\]
+
+\textbf{Wariancja i odchylenie standardowe}
+
+Wariancja \(\sigma^2\) mierzy, jak bardzo log-zwroty odchylają się od wartości oczekiwanej. Estymator wariancji \(\hat{\sigma}^2\) jest dany wzorem:
+\[
+\hat{\sigma}^2 = \frac{1}{n-1} \sum_{i=1}^{n} (r_i - \hat{\mu})^2.
+\]
+Odchylenie standardowe, oznaczone jako \(\hat{\sigma}\), to pierwiastek kwadratowy z estymatora wariancji:
+\[
+\hat{\sigma} = \sqrt{\hat{\sigma}^2}.
+\]
+Wyestymowane wartości wynoszą:  
+\[
+\hat{\sigma}^2 = 0.000463, \quad \hat{\sigma} = 0.0215.
+\]
+
+\textbf{Kwantyle}
+
+Kwantyle wyznaczają wartości log-zwrotów, poniżej których znajduje się określony procent obserwacji. Kwantyle rzędów \(\alpha = 5\%, 50\%, 95\%\) estymujemy na podstawie dystrybuanty empirycznej \(F_n\):
+\[
+q(\alpha) = \hat{Q}(\alpha),
+\]
+gdzie \(\hat{Q}\) to klasyczny estymator kwantyli. Wyestymowane wartości wynoszą:  
+\[
+q(5\%) = -0.0312, \quad q(50\%) = 0.0000, \quad q(95\%) = 0.0360.
+\]
+
+\textbf{Wyniki estymacji}
+
+Wyniki przedstawiono w poniższej tabeli:
+\[
+\begin{array}{|c|c|c|c|c|c|}
+\hline
+\hat{\mu} & \hat{\sigma}^2 & \hat{\sigma} & q(5\%) & q(50\%) & q(95\%) \\
+\hline
+4.74849 \times 10^{-5} & 0.000463 & 0.0215 & -0.0312 & 0.0000 & 0.0360 \\
+\hline
+\end{array}
+\]
+
+\textbf{Interpretacja kwantyli}
+
+\begin{itemize}
+    \item \textbf{Kwantyl 5\%} (\(q(5\%) = -0.0312\)) oznacza, że 5\% log-zwrotów było mniejszych niż \(-3.12\%\).
+    \item \textbf{Mediana (kwantyl 50\%)} (\(q(50\%) = 0.0000\)) wskazuje, że połowa log-zwrotów jest równa lub mniejsza od \(0\).
+    \item \textbf{Kwantyl 95\%} (\(q(95\%) = 0.0360\)) oznacza, że 95\% log-zwrotów było mniejszych niż \(3.60\%\).
+\end{itemize}
+
+Wartości te zostały również zaprezentowane na histogramie log-zwrotów, na którym zaznaczono średnią oraz oszacowane kwantyle.
+
+\begin{figure}[h]
+\centering
+\includegraphics{estymacja_kwantyli_nwg.png}
+\caption{Histogram log-zwrotów z naniesionymi kwantylami, medianą i średnią dla NWG}
+\end{figure}
+
+\subsubsection{Estymator dystrybuanty empirycznej}
+
+Dystrybuanta empiryczna \( F_n(x) \) jest estymatorem dystrybuanty \( F(x) \) zmiennej losowej \( X \), który definiuje się wzorem:
+
+\[
+F_n(x) = \frac{1}{n} \sum_{i=1}^n \mathbf{1}(r_i \leq x),
+\]
+
+gdzie:
+\begin{itemize}
+    \item \( n \) to liczba obserwacji,
+    \item \( r_i \) to log-zwrot w dniu \( i \),
+    \item \( \mathbf{1}(r_i \leq x) \) to funkcja wskaźnikowa, która przyjmuje wartość 1, jeśli \( r_i \leq x \), i 0 w przeciwnym razie.
+\end{itemize}
+
+Funkcja \( F_n(x) \) wyznacza proporcję log-zwrotów mniejszych lub równych \( x \). Wartości \( F_n(x) \) rosną monotonicznie od 0 do 1 w miarę zwiększania \( x \).
+
+\begin{figure}[h]
+\centering
+\includegraphics{dystrybuanta_empiryczna_nwg.png}
+\caption{Wykres wyestymowanej dystrybuanty empirycznej do spółki NWG}
+\end{figure}
+
+
+
+
+
+\subsubsection{Wykresy diagnostyczne. Analiza wartości statystyk.}
+Poniżej przedstawiony jest zbiór wybranych wykresów diagnostycznych; histogram z rokładami teoretycznymi, wykres kwantylowy, dystrybuanta i wykres P-P
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm, height=12cm]{wykresy_diagnostyczne_nwg.png}
+\caption{Wykresy diagnostyczne - NWG}
+\end{figure}
+
+\textbf{Rozkłady prawdopodobieństwa} naniesione na histogram gęstości danych. Wykres przedstawia trzy rozkłady teoretyczne (normalny, log-normalny, gamma) dopasowane parametrami do histogramu gęstości danych. 
+
+\textbf{Wykres kwantylowy QQ-plot} to graficzne narzędzie, które porównuje rozkłady prawdopodobieństwa przez wykreślenie ich kwantyli na przeciwnych osiach (x,y). W przypadku, gdy dane są zgodne z danym rozkładem teoretycznym, punkty na wykresie układają się wzdłuż prostej \(y = x\).
+
+\textbf{CDF}, czyli \textbf{Cumulative Distribution Function} (Dystrybuanta), to funkcja rzeczywista wyznaczająca rozkład prawdopodobieństwa. Przyporządkowuje każdej możliwej wartości zmiennej losowej pewne prawdopodobieństwo, że ta wartość jest mniejsza lub równa danej liczbie. Maksymalnie dystrybuanta wynosi 1 a minimalnie 0. CDF określa, jak prawdopodobieństwo rozkłada się względem konkretnych wartości zmiennych losowych.
+
+\textbf{Wykres PP-plot} to narzędzie, które działa na podobnej zasadzie co QQ-plot, z tą różnicą, że zamiast kwantyli porónywane są prawdopodobieństwa kumulacyjne, czyli dystrybuanty; empiryczna i teoretyczna. W przypadku, gdy dane są zgodne z danym rozkładem teoretycznym, punkty na wykresie układają się wzdłuż prostej \(y = x\).
+
+Wykresy diagnostyczne w kontekście statystyki i analizy danych służą do oceny adekwatności dopasowania modelu do danych i do znalezienia potencjalnych problemów określonego rozkładu.
+
+Na powyższych wykresach widać, że wykresy przedstawiają się zupełnie inaczej. Dla wszysktich wykresów jest widoczne, że najbardziej dystrybucja normalna najlepiej pokrywa nasz wykres. W celu jednoznacznego określenia i potwierdzenia wyników wykorzystam analizę statystyk KS, CM i AD oraz kryteriów informacyjnych AIC i BIC
+
+\vspace*{0.5cm}
+
+\textbf{Analiza matematyczna}
+
+Statystyki te służą do sprawdzania, czy dane zgadzają się z rozkładami: normalnym, log-normalnym i gamma, poprzez analizę różnic między empiryczną dystrybuantą danych a dystrybuantą rozkładów teoretycznych.
+
+Za pomocą tych statystyk możemy precyzyjniej określić, który rozkład najlepiej odpowiada danym, porównując je dla różnych rozkładów w ramach każdej statystyki. Wybieramy ten rozkład, który charakteryzuje się najmniejszą wartością statystyki testowej w większości przypadków, co oznacza, że jego dystrybuanta jest najbardziej zbliżona do empirycznej dystrybuanty danych.
+
+Test \textbf{Kołmogorowa-Smirnowa} jest oparty o największą odległość pomiędzy dystrybuantami empiryczną \(F_n\) i teoretyczną \(F\)
+
+Statystyka \textbf{Craméra-von Misesa} pozwala na ocenę, na ile dane empiryczne zgadzają się z przyjętym teoretycznym rozkładem na przestrzeni całego rozkładu, a nie jak w przypadku KS - punktowej wartości maksymalnej
+
+Test \textbf{Andersona-Darlinga} jest oparty o ważoną odległość Cramera von Misesa pomiędzy dystrybuantami empiryczną \(F_n\) i teoretyczną \(F\) z wagami odpowiadającymi odwrotności wariancji dystrybuanty empirycznej
+
+\vspace*{0.5cm}
+\centerline{Statystyki:}
+\vspace*{0.2cm}
+\centerline{\begin{tabular}{|l|c|c|c|}
+\hline
+& r. normalny & t-studenta  \\
+\hline
+KS & 0.08888125 & 0.4717643  \\
+\hline
+CM & 0.98860358 & 39.4555480  \\
+\hline
+AD & 5.60134046 & 184.2992521  \\
+\hline
+\end{tabular}}
+
+\vspace*{0.5cm}
+\centerline{Kryteria informacyjne:}
+\vspace*{0.2cm}
+
+\centerline{\begin{tabular}{|l|c|c|c|}
+\hline
+& r. normalny & t-studenta  \\
+\hline
+AIC & -2416.931 & 921.9655  \\
+\hline
+BIC & -2408.502 & 926.1802  \\
+\hline
+\end{tabular}}
+
+\vspace*{1cm}
+
+\newpage
+Analizując podane statystyki i kryteria informacyjne, wyniki wskazują, że najniższe wartości statystyk są dla rozkładu normalnego, czyli jest on najlepszym modelem opisującym kursy zamknięcia. W każdym kryterium informacyjnym, rozkład normalny również osiąga najniższe wartości. Oznacza to, że zdecydowanie ma on najlepsze dopasowanie do danych kursów zamknięcia.
+
+\subsubsection{Hipoteza o równości rozkładów}
+Następnym przedmiotem analizy dotyczącym spółki Newag jest badanie hipotezy o równości rozkładów. Test Kołmogorowa-Smirnowa (KS) jest używany do porównania dwóch rozkładów prawdopodobieństwa i określenia, jaka jest maksymalna odległość między tymi rozkładami na podanych danych. Przedsawione poniżej są wyniki tego testu wraz z histogramem gęstości wyników testu KS przeprowadzonego 10000 razy na próbkach 100 elementowych generowanych z rozkładu log-normalnego opisującego według hipotezy zerowej ceny spółki NWG.
+\begin{figure}[h]
+\centering
+\includegraphics[width=9cm, height=12cm]{hipoteza_o_rownosci_nwg.png}
+\caption{Histogram gęstości wyników testu KS próbek metody Monte-Carlo - NWG}
+\end{figure}
+
+Hipoteza zerowa \(H_0\) zakłada, że za pomocą rozkładu normalnego można opisywać ceny spółki NWG. Hipoteza alternatywna \(H_1\) ma przeciwne założenia: za pomocą rozkładu normalnego nie można opisywać cen.
+
+Metoda Monte-Carlo, którą testujemy hipotezę zerową polega na wielokrotnym (w tym przypadku 10000-krotnym) generowaniu próbek n-elementowych (tutaj: n=100) z określonego rozkładu, a następnie poddaniu każdorazowo próbki określonemu testowi (KS). 
+
+P-value, czyli procent danych otrzymanych metodą MC, które są większe od testu KS dla oryginalnych danych wynosi praktycznie 0\%. Test sugeruje, że na danym poziomie istotności, wynoszącym 5\% są podstawy do odrzucenia hipotezy zerowej, zakładającej, że badane dane mają rozkład normalny.
+
+
+
+
+
+
+
+
+
+\subsection{Spółka DT.US}
+Kontynuując analizę cen akcji, przechodzimy do spółki Dynatrace. Pierwszym krokiem będzie przyjrzenie się statystykom opisowym.
+
+\subsubsection{Wykres cen zamknięcia akcji i histogram}
+Poniżej przedstawiamy wykres kursów zamknięcia, który ilustruje zmiany w czasie, oraz histogram gęstości dla cen akcji spółki Dynatrace.
+
+\begin{figure}[h]
+\centering
+\begin{minipage}[b]{0.40\textwidth}
+\centering
+\includegraphics[width=\textwidth, height=5.2cm, width = 7cm]{Wykres_cen_akcji_dt.png}
+\caption{Wykres cen zamknięcia akcji pokazujący zmiany w czasie DT.US}
+\label{fig:r3}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.40\textwidth}
+\centering
+\includegraphics[width=\textwidth, height=5.25cm, width = 7cm]{wykres_zwrotów_nwg.png}
+\caption{Wykres log-zwrotów cen zamknięcia DT.US}
+\label{fig:r4}
+\end{minipage}
+\end{figure}
+
+
+\subsubsection{Estymacja parametrów rozkładu log-zwrotów}
+
+Zakładamy, że log-zwroty \(r_1, r_2, \ldots, r_n\) są niezależnymi realizacjami zmiennej losowej \(X\), która ma wartość oczekiwaną \(\mu\), wariancję \(\sigma^2\) oraz dystrybuantę \(F\). W tym rozdziale przeprowadzamy estymację parametrów \(\mu\) i \(\sigma^2\) oraz analizę kwantyli rozkładu na podstawie danych log-zwrotów.
+
+\smallskip
+\textbf{Wartość oczekiwana}
+
+Wartość oczekiwana log-zwrotów, oznaczona jako \(\mu\), reprezentuje średnią zmianę cen akcji w badanym okresie. Estymator wartości oczekiwanej \(\hat{\mu}\) wyraża się wzorem:
+\[
+\hat{\mu} = \frac{1}{n} \sum_{i=1}^{n} r_i,
+\]
+gdzie \(n\) to liczba obserwacji, a \(r_i\) to log-zwrot w dniu \(i\). Wyestymowana wartość oczekiwana wynosi:  
+\[
+\hat{\mu} = 1.618569 \times 10^{-4}.
+\]
+
+\textbf{Wariancja i odchylenie standardowe}
+
+Wariancja \(\sigma^2\) mierzy, jak bardzo log-zwroty odchylają się od wartości oczekiwanej. Estymator wariancji \(\hat{\sigma}^2\) jest dany wzorem:
+\[
+\hat{\sigma}^2 = \frac{1}{n-1} \sum_{i=1}^{n} (r_i - \hat{\mu})^2.
+\]
+Odchylenie standardowe, oznaczone jako \(\hat{\sigma}\), to pierwiastek kwadratowy z estymatora wariancji:
+\[
+\hat{\sigma} = \sqrt{\hat{\sigma}^2}.
+\]
+Wyestymowane wartości wynoszą:  
+\[
+\hat{\sigma}^2 = 0.0009134114, \quad \hat{\sigma} = 0.0302227.
+\]
+
+\textbf{Kwantyle}
+
+Kwantyle wyznaczają wartości log-zwrotów, poniżej których znajduje się określony procent obserwacji. Kwantyle rzędów \(\alpha = 5\%, 50\%, 95\%\) estymujemy na podstawie dystrybuanty empirycznej \(F_n\):
+\[
+q(\alpha) = \hat{Q}(\alpha),
+\]
+gdzie \(\hat{Q}\) to klasyczny estymator kwantyli. Wyestymowane wartości wynoszą:  
+\[
+q(5\%) = -0.0480, \quad q(50\%) = 0.0010, \quad q(95\%) = 0.0439.
+\]
+
+\textbf{Wyniki estymacji}
+
+Wyniki przedstawiono w poniższej tabeli:
+\[
+\begin{array}{|c|c|c|c|c|c|}
+\hline
+\hat{\mu} & \hat{\sigma}^2 & \hat{\sigma} & q(5\%) & q(50\%) & q(95\%) \\
+\hline
+\hat{\mu} = 1.618569 \times 10^{-4} & 0.0009134114 & 0.0302227 & -0.0480 & 0.0010 & 0.0439 \\
+\hline
+\end{array}
+\]
+
+\textbf{Interpretacja kwantyli}
+
+\begin{itemize}
+    \item \textbf{Kwantyl 5\%} (\(q(5\%) = -0.0480\)) oznacza, że 5\% log-zwrotów było mniejszych niż \(-4.80\%\).
+    \item \textbf{Mediana (kwantyl 50\%)} (\(q(50\%) = 0.0010\)) wskazuje, że połowa log-zwrotów jest równa lub mniejsza od \(0.10\%\).
+    \item \textbf{Kwantyl 95\%} (\(q(95\%) = 0.0439\)) oznacza, że 95\% log-zwrotów było mniejszych niż \(4.39\%\).
+\end{itemize}
+
+Wartości te zostały również zaprezentowane na histogramie log-zwrotów, na którym zaznaczono średnią oraz oszacowane kwantyle.
+
+\begin{figure}[h]
+\centering
+\includegraphics{estymacja_kwantyli_nwg.png}
+\caption{Histogram log-zwrotów z naniesionymi kwantylami, medianą i średnią dla NWG}
+\end{figure}
+
+\subsubsection{Estymator dystrybuanty empirycznej}
+
+Dystrybuanta empiryczna \( F_n(x) \) jest estymatorem dystrybuanty \( F(x) \) zmiennej losowej \( X \), który definiuje się wzorem:
+
+\[
+F_n(x) = \frac{1}{n} \sum_{i=1}^n \mathbf{1}(r_i \leq x),
+\]
+
+gdzie:
+\begin{itemize}
+    \item \( n \) to liczba obserwacji,
+    \item \( r_i \) to log-zwrot w dniu \( i \),
+    \item \( \mathbf{1}(r_i \leq x) \) to funkcja wskaźnikowa, która przyjmuje wartość 1, jeśli \( r_i \leq x \), i 0 w przeciwnym razie.
+\end{itemize}
+
+Funkcja \( F_n(x) \) wyznacza proporcję log-zwrotów mniejszych lub równych \( x \). Wartości \( F_n(x) \) rosną monotonicznie od 0 do 1 w miarę zwiększania \( x \).
+
+\begin{figure}[h]
+\centering
+\includegraphics{dystrybuanta_empiryczna_dt.png}
+\caption{Wykres wyestymowanej dystrybuanty empirycznej spółki DT.US}
+\end{figure}
+
+
+
+
+
+\subsubsection{Wykresy diagnostyczne. Analiza wartości statystyk.}
+Poniżej przedstawiony jest zbiór wybranych wykresów diagnostycznych; histogram z rokładami teoretycznymi, wykres kwantylowy, dystrybuanta i wykres P-P
+\begin{figure}[h]
+\centering
+\includegraphics[width=12cm, height=12cm]{wykresy_diagnostyczne_dt.png}
+\caption{Wykresy diagnostyczne -- DT.US}
+\end{figure}
+
+\textbf{Rozkłady prawdopodobieństwa} naniesione na histogram gęstości danych. Wykres przedstawia trzy rozkłady teoretyczne (normalny, log-normalny, gamma) dopasowane parametrami do histogramu gęstości danych. 
+
+\textbf{Wykres kwantylowy QQ-plot} to graficzne narzędzie, które porównuje rozkłady prawdopodobieństwa przez wykreślenie ich kwantyli na przeciwnych osiach (x,y). W przypadku, gdy dane są zgodne z danym rozkładem teoretycznym, punkty na wykresie układają się wzdłuż prostej \(y = x\).
+
+\textbf{CDF}, czyli \textbf{Cumulative Distribution Function} (Dystrybuanta), to funkcja rzeczywista wyznaczająca rozkład prawdopodobieństwa. Przyporządkowuje każdej możliwej wartości zmiennej losowej pewne prawdopodobieństwo, że ta wartość jest mniejsza lub równa danej liczbie. Maksymalnie dystrybuanta wynosi 1 a minimalnie 0. CDF określa, jak prawdopodobieństwo rozkłada się względem konkretnych wartości zmiennych losowych.
+
+\textbf{Wykres PP-plot} to narzędzie, które działa na podobnej zasadzie co QQ-plot, z tą różnicą, że zamiast kwantyli porónywane są prawdopodobieństwa kumulacyjne, czyli dystrybuanty; empiryczna i teoretyczna. W przypadku, gdy dane są zgodne z danym rozkładem teoretycznym, punkty na wykresie układają się wzdłuż prostej \(y = x\).
+
+Wykresy diagnostyczne w kontekście statystyki i analizy danych służą do oceny adekwatności dopasowania modelu do danych i do znalezienia potencjalnych problemów określonego rozkładu.
+
+Na powyższych wykresach widać, że wykresy przedstawiają się zupełnie inaczej. Dla wszysktich wykresów jest widoczne, że najbardziej dystrybucja normalna najlepiej pokrywa nasz wykres. W celu jednoznacznego określenia i potwierdzenia wyników wykorzystam analizę statystyk KS, CM i AD oraz kryteriów informacyjnych AIC i BIC
+
+\vspace*{0.5cm}
+
+\textbf{Analiza matematyczna}
+
+Statystyki te służą do sprawdzania, czy dane zgadzają się z rozkładami: normalnym, log-normalnym i gamma, poprzez analizę różnic między empiryczną dystrybuantą danych a dystrybuantą rozkładów teoretycznych.
+
+Za pomocą tych statystyk możemy precyzyjniej określić, który rozkład najlepiej odpowiada danym, porównując je dla różnych rozkładów w ramach każdej statystyki. Wybieramy ten rozkład, który charakteryzuje się najmniejszą wartością statystyki testowej w większości przypadków, co oznacza, że jego dystrybuanta jest najbardziej zbliżona do empirycznej dystrybuanty danych.
+
+Test \textbf{Kołmogorowa-Smirnowa} jest oparty o największą odległość pomiędzy dystrybuantami empiryczną \(F_n\) i teoretyczną \(F\)
+
+Statystyka \textbf{Craméra-von Misesa} pozwala na ocenę, na ile dane empiryczne zgadzają się z przyjętym teoretycznym rozkładem na przestrzeni całego rozkładu, a nie jak w przypadku KS - punktowej wartości maksymalnej
+
+Test \textbf{Andersona-Darlinga} jest oparty o ważoną odległość Cramera von Misesa pomiędzy dystrybuantami empiryczną \(F_n\) i teoretyczną \(F\) z wagami odpowiadającymi odwrotności wariancji dystrybuanty empirycznej
+
+\vspace*{0.5cm}
+\centerline{Statystyki:}
+\vspace*{0.2cm}
+\centerline{\begin{tabular}{|l|c|c|}
+\hline
+& r. normalny & t-studenta  \\
+\hline
+KS & 0.0953095 & 0.4630927  \\
+\hline
+CM & 1.1377620 & 38.6249487  \\
+\hline
+AD & 6.1072555 & 180.9702115  \\
+\hline
+\end{tabular}}
+
+\vspace*{0.5cm}
+\centerline{Kryteria informacyjne:}
+\vspace*{0.2cm}
+
+\centerline{\begin{tabular}{|l|c|c|}
+\hline
+& r. normalny & t-studenta  \\
+\hline
+AIC & -2077.225 & 922.1910  \\
+\hline
+BIC & -2068.795 & 926.4056  \\
+\hline
+\end{tabular}}
+
+\vspace*{1cm}
+
+\newpage
+Analizując podane statystyki i kryteria informacyjne, wyniki wskazują, że rozkład normalny ma lepsze dopasowanie do danych kursów zamknięcia w porównaniu do rozkładu t-Studenta. Statystyki Kolmogorowa-Smirnowa, Cramera-von Misesa oraz Andersona-Darlinga dla rozkładu normalnego są znacznie niższe niż dla rozkładu t-Studenta, co sugeruje, że rozkład normalny lepiej opisuje te dane.
+
+Dodatkowo, w każdym z kryteriów informacyjnych (Akaike's Information Criterion oraz Bayesian Information Criterion) rozkład normalny osiąga najniższe wartości, co potwierdza jego przewagę jako modelu opisującego kursy zamknięcia. W związku z tym, można stwierdzić, że rozkład normalny jest najlepszym modelem dla analizowanych danych.
+
+\subsubsection{Hipoteza o równości rozkładów}
+Kolejnym aspektem analizy dotyczącej spółki DT.US jest ocena hipotezy o równości rozkładów. W tym celu zastosowano test Kołmogorowa-Smirnowa (KS), który służy do porównania dwóch rozkładów prawdopodobieństwa oraz do określenia maksymalnej różnicy między nimi na podstawie dostępnych danych. Poniżej przedstawiono wyniki tego testu, a także histogram gęstości, który ilustruje wyniki testu KS przeprowadzonego 10000 razy na próbkach składających się z 100 elementów, generowanych z rozkładu log-normalnego, który według hipotezy zerowej ma na celu opisanie cen spółki DT.US.
+\begin{figure}[h]
+\centering
+\includegraphics[width=9cm, height=12cm]{hipoteza_o_rownosci_dt.png}
+\caption{Histogram gęstości wyników testu KS próbek metody Monte-Carlo -- DT.US}
+\end{figure}
+
+Hipoteza zerowa \(H_0\) zakłada, że za pomocą rozkładu normalnego można opisywać ceny spółki NWG. Hipoteza alternatywna \(H_1\) ma przeciwne założenia: za pomocą rozkładu normalnego nie można opisywać cen.
+
+Metoda Monte-Carlo, którą testujemy hipotezę zerową polega na wielokrotnym (w tym przypadku 10000-krotnym) generowaniu próbek n-elementowych (tutaj: n=100) z określonego rozkładu, a następnie poddaniu każdorazowo próbki określonemu testowi (KS). 
+
+P-value, czyli procent danych otrzymanych metodą MC, które są większe od testu KS dla oryginalnych danych wynosi praktycznie 0\%. Test sugeruje, że na danym poziomie istotności, wynoszącym 5\% są podstawy do odrzucenia hipotezy zerowej, zakładającej, że badane dane mają rozkład normalny.
+
+
+
+\section{Analiza łącznego rozkładu log-zwrotów}
+
+W tej części przeprowadzimy analizę wektora log-zwrotów dwóch akcji: Newag (NWG) oraz Dynatrace (DT.US). 
+
+\subsection{Założenia i estymacja parametrów}
+Załóżmy, że log-zwroty dwóch akcji są niezależnymi realizacjami wektora losowego \((X, Y)\) o nieznanej gęstości \(f\), wektorze średnich \((\mu_1, \mu_2)\), współczynniku korelacji \(\rho\), macierzy kowariancji \(\Sigma\) i macierzy korelacji \(P\). Estymatory tych parametrów wyrażają się wzorami:
+
+\[
+\hat{\mu}_1 = \frac{1}{n} \sum_{i=1}^{n} X_i, \quad \hat{\mu}_2 = \frac{1}{n} \sum_{i=1}^{n} Y_i
+\]
+
+\[
+\hat{\sigma}_{X}^2 = \frac{1}{n-1} \sum_{i=1}^{n} (X_i - \hat{\mu}_1)^2, \quad \hat{\sigma}_{Y}^2 = \frac{1}{n-1} \sum_{i=1}^{n} (Y_i - \hat{\mu}_2)^2
+\]
+
+\[
+\hat{\sigma}_{XY} = \frac{1}{n-1} \sum_{i=1}^{n} (X_i - \hat{\mu}_1)(Y_i - \hat{\mu}_2)
+\]
+
+\[
+\hat{\rho} = \frac{\hat{\sigma}_{XY}}{\hat{\sigma}_X \hat{\sigma}_Y}
+\]
+
+\[
+\hat{\Sigma} = \begin{pmatrix}
+\hat{\sigma}_X^2 & \hat{\sigma}_{XY} \\
+\hat{\sigma}_{XY} & \hat{\sigma}_Y^2
+\end{pmatrix}, \quad \hat{P} = \begin{pmatrix}
+1 & \hat{\rho} \\
+\hat{\rho} & 1
+\end{pmatrix}
+\]
+
+\subsection{Wykres rozrzutu z histogramami rozkładów brzegowych}
+Poniżej przedstawiamy wykres rozrzutu log-zwrotów akcji NWG i DT.US wraz z histogramami rozkładów brzegowych.
+
+\begin{figure}[h]
+\centering
+\includegraphics{rozrzut_z_histogramami.png}
+\caption{Wykres rozrzutu log-zwrotów z histogramami rozkładów brzegowych}
+\end{figure}
+
+Wykres rozrzutu przedstawia zależność między log-zwrotami akcji DT.US (oś X) i NWG (oś Y). Każdy punkt na wykresie reprezentuje parę log-zwrotów dla obu spółek w danym dniu. Histogramy po bokach wykresu pokazują rozkłady brzegowe log-zwrotów dla każdej z akcji osobno.
+
+Większość punktów skupia się wokół środka wykresu, co sugeruje, że log-zwroty obu akcji mają tendencję do oscylowania wokół swoich średnich wartości. Histogramy brzegowe wskazują, że rozkłady log-zwrotów dla obu akcji są zbliżone do rozkładu normalnego, co jest zgodne z wcześniejszymi analizami.
+
+Wykres rozrzutu pozwala również na ocenę korelacji między log-zwrotami obu akcji. Jeśli punkty na wykresie układają się wzdłuż linii prostej, oznacza to silną korelację między zmiennymi. W przypadku braku wyraźnego wzorca lub gdy punkty są rozproszone, korelacja jest słaba lub nieistniejąca. Na przedstawionym wykresie punkty są dość rozproszone, co sugeruje, że nie ma wyraźnej korelacji między log-zwrotami akcji DT.US i NWG.
+
+Rozkłady brzegowe są symetryczne, co dodatkowo potwierdza, że log-zwroty obu akcji mogą być dobrze modelowane za pomocą rozkładu normalnego.
+
+Wykres rozrzutu z histogramami rozkładów brzegowych dostarcza cennych informacji na temat struktury danych i potwierdza, że rozkład normalny jest odpowiednim modelem dla log-zwrotów obu akcji.
+
+
+\subsection{Gęstość rozkładu normalnego i rozkładów brzegowych}
+Gęstość łączna rozkładu normalnego o wyestymowanych parametrach \(N(\hat{\mu}, \hat{\Sigma})\) wyraża się wzorem:
+
+\[
+\hat{f}(x, y) = \frac{1}{2\pi \sqrt{|\hat{\Sigma}|}} \exp \left( -\frac{1}{2} (z^T \hat{\Sigma}^{-1} z) \right)
+\]
+
+gdzie \(z = \begin{pmatrix}
+x - \hat{\mu}_1 \\
+y - \hat{\mu}_2
+\end{pmatrix}\).
+
+Gęstości brzegowe mają postać:
+
+\[
+\hat{f}_X(x) = \frac{1}{\sqrt{2\pi \hat{\sigma}_X^2}} \exp \left( -\frac{(x - \hat{\mu}_1)^2}{2\hat{\sigma}_X^2} \right)
+\]
+
+\[
+\hat{f}_Y(y) = \frac{1}{\sqrt{2\pi \hat{\sigma}_Y^2}} \exp \left( -\frac{(y - \hat{\mu}_2)^2}{2\hat{\sigma}_Y^2} \right)
+\]
+
+Przedstawiamy wykres gęstości łącznej oraz wykresy gęstości brzegowych.
+
+\begin{figure}[h]
+\centering
+\includegraphics{zwroty_gestosc_laczona.png}
+\caption{Wykres gęstości łącznej log-zwrotów NWG i DT.US}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics{zwroty_wykresy_jednowymiarowe.png}
+\caption{Wykresy gęstości brzegowych log-zwrotów NWG i DT.US}
+\end{figure}
+
+Wykres gęstości łącznej przedstawia trójwymiarową powierzchnię, która ilustruje, jak prawdopodobieństwo rozkłada się w przestrzeni log-zwrotów obu akcji. Najwyższe punkty na wykresie odpowiadają największemu prawdopodobieństwu wystąpienia określonych par log-zwrotów. Wykres ten pozwala na wizualizację zależności między log-zwrotami akcji NWG i DT.US.
+
+Wykresy gęstości brzegowych przedstawiają jednowymiarowe rozkłady prawdopodobieństwa log-zwrotów dla każdej z akcji osobno. Wykresy te pokazują, jak prawdopodobieństwo rozkłada się wzdłuż osi log-zwrotów dla akcji NWG i DT.US. Oba wykresy gęstości brzegowych są symetryczne i mają kształt zbliżony do rozkładu normalnego, co potwierdza wcześniejsze analizy.
+
+Analizując wykresy, można zauważyć, że gęstość łączna jest skoncentrowana wokół środka, co sugeruje, że log-zwroty obu akcji mają tendencję do oscylowania wokół swoich średnich wartości. Wykresy gęstości brzegowych dodatkowo potwierdzają, że log-zwroty obu akcji mogą być dobrze modelowane za pomocą rozkładu normalnego.
+
+\subsection{Generowanie próby z rozkładu normalnego}
+Wygenerowaliśmy próbę o liczności równej liczbie danych z rozkładu \(N(\hat{\mu}, \hat{\Sigma})\). Poniżej przedstawiamy wykres rozrzutu wygenerowanej próby oraz porównanie z wykresem rozrzutu danych.
+
+\begin{figure}[h]
+\centering
+\includegraphics{diff_gestosc_laczona_detailed.png}
+\caption{Porównanie wykresu rozrzutu danych i wygenerowanej próby}
+\end{figure}
+
+Wykres rozrzutu wygenerowanej próby przedstawia zależność między log-zwrotami akcji DT.US (oś X) i NWG (oś Y) dla danych wygenerowanych z rozkładu normalnego o wyestymowanych parametrach. Porównując ten wykres z wykresem rozrzutu rzeczywistych danych, można ocenić, jak dobrze rozkład normalny opisuje rzeczywiste dane.
+
+Na obu wykresach punkty są skoncentrowane wokół środka, co sugeruje, że zarówno rzeczywiste dane, jak i wygenerowana próba mają podobne średnie wartości log-zwrotów. Rozproszenie punktów na obu wykresach jest również podobne, co wskazuje na podobną wariancję log-zwrotów w rzeczywistych danych i wygenerowanej próbie.
+
+Porównanie wykresów rozrzutu danych i wygenerowanej próby potwierdza, że rozkład normalny z wyestymowanymi parametrami dobrze opisuje log-zwroty akcji NWG i DT.US.
+
+
+\subsection{Ocena dobroci dopasowania rozkładu normalnego}
+
+Analizując wykresy rozrzutu danych i wygenerowanej próby, można ocenić dobroć dopasowania rozkładu normalnego. Widać, że rozkład normalny z wyestymowanymi parametrami dobrze opisuje dane, co potwierdzają podobieństwa w strukturze rozrzutu.
+
+Na obu wykresach punkty są skoncentrowane wokół środka, co sugeruje, że zarówno rzeczywiste dane, jak i wygenerowana próba mają podobne średnie wartości log-zwrotów. Rozproszenie punktów na obu wykresach jest również podobne, co wskazuje na podobną wariancję log-zwrotów w rzeczywistych danych i wygenerowanej próbie.
+
+Dodatkowo, brak wyraźnych odchyleń od linii prostej na wykresach rozrzutu sugeruje, że nie ma istotnych różnic między rzeczywistymi danymi a danymi wygenerowanymi z rozkładu normalnego. To potwierdza, że rozkład normalny jest odpowiednim modelem dla log-zwrotów obu akcji.
+
+Porównanie wykresów rozrzutu danych i wygenerowanej próby potwierdza, że rozkład normalny z wyestymowanymi parametrami dobrze opisuje log-zwroty akcji NWG i DT.US.
+
+
+\section{Podsumowanie}
+W ramach projektu egzaminacyjnego z modelowania matematycznego przeprowadziliśmy szczegółową analizę cen akcji dwóch spółek: polskiej spółki Newag (NWG) oraz amerykańskiej spółki technologicznej Dynatrace (DT.US). Analiza obejmowała statystyki opisowe, wykresy diagnostyczne oraz testowanie hipotezy o równości rozkładów cenowych obu spółek.
+
+Dla każdej ze spółek przeprowadziliśmy estymację parametrów rozkładu log-zwrotów, w tym wartości oczekiwanej, wariancji oraz kwantyli. Następnie, za pomocą wykresów diagnostycznych, oceniliśmy dopasowanie różnych rozkładów teoretycznych do danych empirycznych. Wyniki wskazały, że rozkład normalny najlepiej opisuje log-zwroty obu spółek.
+
+W dalszej części pracy przeanalizowaliśmy łączny rozkład log-zwrotów obu akcji, estymując parametry wektora średnich, współczynnika korelacji, macierzy kowariancji oraz macierzy korelacji. Wykres rozrzutu z histogramami rozkładów brzegowych pozwolił na ocenę zależności między log-zwrotami obu akcji, wskazując na brak wyraźnej korelacji między nimi.
+
+Przeprowadziliśmy również generowanie próby z rozkładu normalnego o wyestymowanych parametrach i porównaliśmy wykres rozrzutu wygenerowanej próby z wykresem rozrzutu rzeczywistych danych. Analiza wykazała, że rozkład normalny z wyestymowanymi parametrami dobrze opisuje log-zwroty obu akcji.
+
+Podsumowując, porównaliśmy dwie spółki działające w zupełnie różnych branżach i na różnych rynkach: Newag, polską firmę zajmującą się produkcją taboru kolejowego, oraz Dynatrace, amerykańską firmę technologiczną specjalizującą się w monitorowaniu aplikacji i infrastruktur chmurowych. Pomimo różnic w branżach i odbiorcach ich usług, analiza wykazała, że log-zwroty obu spółek mogą być dobrze modelowane za pomocą rozkładu normalnego. Wyniki te sugerują, że niezależnie od specyfiki branży, rozkład normalny może być użytecznym narzędziem do modelowania log-zwrotów cen akcji.
+
+
+
+
+\end{document}
+

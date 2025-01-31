@@ -136,7 +136,7 @@ log_zwroty_nwg_df <- data.frame(data = kurs_data_cut_nwg, log_zwroty = log_zwrot
 # Przycięcie pierwszego elementu kurs_data_dyn
 kurs_data_cut_dt <- kurs_data_dyn[-1]
 
-log_zwroty_dt_df <- data.frame(data = kurs_data_cut_dyn, log_zwroty = log_zwroty_dt)
+log_zwroty_dt_df <- data.frame(data = kurs_data_cut_dt, log_zwroty = log_zwroty_dt)
 
 histogram_zwrotów_nwg_ggplot <- ggplot(
   log_zwroty_nwg_df,
@@ -228,10 +228,10 @@ wykres_kwantyli_nwg <- ggplot(log_zwroty_nwg_df, aes(x = log_zwroty_nwg)) +
   geom_vline(aes(xintercept = quantiles_nwg[1], color = "Kwantyl 5%"), linetype = "dotted", size = 1) + # Kwantyl 5%
   geom_vline(aes(xintercept = quantiles_nwg[2], color = "Mediana"), linetype = "dotted", size = 1) + # Mediana
   geom_vline(aes(xintercept = quantiles_nwg[3], color = "Kwantyl 95%"), linetype = "dotted", size = 1) + # Kwantyl 95%
-  scale_color_manual(name = "Legenda", 
-                     values = c("Średnia" = "red", 
-                                "Kwantyl 5%" = "blue", 
-                                "Mediana" = "green", 
+  scale_color_manual(name = "Legenda",
+                     values = c("Średnia" = "red",
+                                "Kwantyl 5%" = "blue",
+                                "Mediana" = "green",
                                 "Kwantyl 95%" = "orange")) + # Kolory i etykiety legendy
   labs(title = NULL, x = "Log-Zwroty", y = "Gęstość") + # Tytuły osi i wykresu
   theme_minimal() + # Minimalny styl wykresu
@@ -276,10 +276,10 @@ wykres_kwantyli_dt <- ggplot(log_zwroty_dt_df, aes(x = log_zwroty_dt)) +
   geom_vline(aes(xintercept = quantiles_dt[1], color = "Kwantyl 5%"), linetype = "dotted", size = 1) + # Kwantyl 5%
   geom_vline(aes(xintercept = quantiles_dt[2], color = "Mediana"), linetype = "dotted", size = 1) + # Mediana
   geom_vline(aes(xintercept = quantiles_dt[3], color = "Kwantyl 95%"), linetype = "dotted", size = 1) + # Kwantyl 95%
-  scale_color_manual(name = "Legenda", 
-                     values = c("Średnia" = "red", 
-                                "Kwantyl 5%" = "blue", 
-                                "Mediana" = "green", 
+  scale_color_manual(name = "Legenda",
+                     values = c("Średnia" = "red",
+                                "Kwantyl 5%" = "blue",
+                                "Mediana" = "green",
                                 "Kwantyl 95%" = "orange")) + # Kolory i etykiety legendy
   labs(title = NULL, x = "Log-Zwroty", y = "Gęstość") + # Tytuły osi i wykresu
   theme_minimal() + # Minimalny styl wykresu
@@ -475,8 +475,8 @@ n_nwg
 
 D_nwg <- c()
 
-for (i in 1:iterations) {
-  y_ln_nwg <- rnorm(n, dist_norm_nwg$estimate[1], dist_norm_nwg$estimate[2])
+for (i in 1:iterations_nwg) {
+  y_ln_nwg <- rnorm(n_nwg, dist_norm_nwg$estimate[1], dist_norm_nwg$estimate[2])
   D_nwg[i] <- ks.test(
     y_ln_nwg,
     pnorm,
@@ -537,8 +537,8 @@ n_dt
 
 D_dt <- c()
 
-for (i in 1:iterations) {
-  y_ln_dt <- rnorm(n, dist_norm_dt$estimate[1], dist_norm_dt$estimate[2])
+for (i in 1:iterations_dt) {
+  y_ln_dt <- rnorm(n_dt, dist_norm_dt$estimate[1], dist_norm_dt$estimate[2])
   D_dt[i] <- ks.test(
     y_ln_dt,
     pnorm,
@@ -755,4 +755,155 @@ persp(x, y, z,
   ltheta = 25, ticktype = "detailed", main = "Gęstość łączna"
 )
 dev.off()
+
+#-----------------------------------------
+# Rozdział 3
+# Przedziały ufności dla wartości oczekiwanej
+#-----------------------------------------
+
+# Funkcja obliczająca przedział ufności dla średniej
+CI_mean <- function(data, alpha = 0.05) {
+  n <- length(data)
+  m <- mean(data)
+  t <- qt(1-alpha/2, n-1)
+
+  l <- m - t * sd(data)/sqrt(n)
+  p <- m + t * sd(data)/sqrt(n)
+
+  return(c(left=l, right=p, length=p-l))
+}
+
+# Przedziały ufności dla log-zwrotów NWG
+CI_nwg <- CI_mean(m_log_zwroty_nwg)
+CI_nwg
+
+# Przedziały ufności dla log-zwrotów DT
+CI_dt <- CI_mean(m_log_zwroty_dyn)
+CI_dt
+
+# Bootstrap dla przedziałów ufności
+bootstrap_CI <- function(data, B=1000, alpha=0.05) {
+  n <- length(data)
+  means <- numeric(B)
+
+  for(i in 1:B) {
+    sample_data <- sample(data, n, replace=TRUE)
+    means[i] <- mean(sample_data)
+  }
+
+  CI <- quantile(means, c(alpha/2, 1-alpha/2))
+  return(c(left=CI[1], right=CI[2], length=diff(CI)))
+}
+
+# Bootstrap CI dla NWG
+CI_boot_nwg <- bootstrap_CI(m_log_zwroty_nwg)
+CI_boot_nwg
+
+# Bootstrap CI dla DT
+CI_boot_dt <- bootstrap_CI(m_log_zwroty_dyn)
+CI_boot_dt
+
+#-----------------------------------------
+# Regresja liniowa
+#-----------------------------------------
+
+# Model regresji liniowej
+model <- lm(m_log_zwroty_nwg ~ m_log_zwroty_dyn)
+summary(model)
+
+# Wykres rozrzutu z linią regresji
+scatter_plot <- ggplot(data.frame(x=m_log_zwroty_dyn, y=m_log_zwroty_nwg),
+                      aes(x=x, y=y)) +
+  geom_point() +
+  geom_smooth(method="lm", se=TRUE) +
+  labs(x="Log-zwroty DT", y="Log-zwroty NWG",
+       title="Wykres rozrzutu z linią regresji")
+
+ggsave(
+  "img/regresja_rozrzut.png",
+  plot = scatter_plot,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
+# Analiza reszt
+residuals <- resid(model)
+
+# Test normalności reszt
+shapiro.test(residuals)
+
+# Wykres normalności reszt
+qq_plot <- ggplot(data.frame(residuals=residuals), aes(sample=residuals)) +
+  stat_qq() +
+  stat_qq_line() +
+  labs(title="Wykres normalności reszt")
+
+ggsave(
+  "img/regresja_qq_plot.png",
+  plot = qq_plot,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
+# Histogram reszt
+hist_plot <- ggplot(data.frame(residuals=residuals), aes(x=residuals)) +
+  geom_histogram(aes(y=..density..), bins=30) +
+  geom_density() +
+  labs(title="Histogram reszt")
+
+ggsave(
+  "img/regresja_hist_reszt.png",
+  plot = hist_plot,
+  width = 12,
+  height = 9,
+  units = "cm",
+  dpi = 480
+)
+
+# Predykcja dla średniej wartości log-zwrotów DT
+mean_dt <- mean(m_log_zwroty_dyn)
+pred <- predict(model, newdata=data.frame(m_log_zwroty_dyn=mean_dt),
+               interval="confidence")
+pred
+
+# Bootstrap dla przedziałów ufności predykcji
+bootstrap_pred_CI <- function(x, y, x0, B=1000, alpha=0.05) {
+  n <- length(x)
+  preds <- numeric(B)
+
+  for(i in 1:B) {
+    # Losowanie indeksów z powtórzeniami
+    idx <- sample(1:n, n, replace=TRUE)
+    x_boot <- x[idx]
+    y_boot <- y[idx]
+
+    # Model regresji na próbce bootstrapowej
+    model_boot <- lm(y_boot ~ x_boot)
+
+    # Predykcja
+    preds[i] <- coef(model_boot)[1] + coef(model_boot)[2] * x0
+  }
+
+  CI <- quantile(preds, c(alpha/2, 1-alpha/2))
+  return(c(left=CI[1], right=CI[2], length=diff(CI)))
+}
+
+# Bootstrap CI dla predykcji
+CI_pred_boot <- bootstrap_pred_CI(m_log_zwroty_dyn, m_log_zwroty_nwg, mean_dt)
+CI_pred_boot
+
+# Jeśli któryś ze współczynników jest nieistotny, wykonujemy model uproszczony
+# Model bez wyrazu wolnego
+model_simple <- lm(m_log_zwroty_nwg ~ 0 + m_log_zwroty_dyn)
+summary(model_simple)
+
+# Predykcja z modelu uproszczonego
+pred_simple <- predict(model_simple,
+                      newdata=data.frame(m_log_zwroty_dyn=mean_dt),
+                      interval="confidence")
+pred_simple
 
