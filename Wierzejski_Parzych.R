@@ -901,6 +901,39 @@ ggsave(
   dpi = 480
 )
 
+lm_diffs <- lm(diff_nwg ~ diff_dyn, data = diff_df)
+lm_diffs
+
+#-----------------------------------------
+# Przeprowadzamy testy na istotność wspóczynników b0, b1
+# Wartość statystyki testowej oraz p-value
+#-----------------------------------------
+
+# Wydzielamy estymatory współczynników i błędy standardowe
+coefficients <- coef(lm_diffs)
+standard_errors <- sqrt(diag(vcov(lm_diffs)))
+
+# statystyka t
+t_statistics <- coefficients / standard_errors
+
+# Wydzielamy stopnie swobody
+df <- lm_diffs$df.residual
+
+# Obliczamy oba p-value
+p_values <- 2 * pt(abs(t_statistics), df, lower.tail = FALSE)
+
+# tworzenie ładnej tabeli wyników:
+# esytmatory współczynników, błędy standardowe, stystyki t i p-values
+result_summary <- data.frame(
+  Coefficients = coefficients,
+  Std_Errors = standard_errors,
+  T_Statistics = t_statistics,
+  P_Values = p_values
+)
+result_summary
+
+
+
 # Analiza reszt
 residuals <- resid(model)
 
