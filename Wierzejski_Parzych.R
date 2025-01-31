@@ -413,7 +413,6 @@ par(mfrow = c(2, 2))
 denscomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
 qqcomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
 cdfcomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
-ppcomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
 
 dev.off()
 
@@ -440,7 +439,6 @@ par(mfrow = c(2, 2))
 denscomp(list(dist_norm_dt, dist_t_dt), legendtext = key_dt)
 qqcomp(list(dist_norm_dt, dist_t_dt), legendtext = key_dt)
 cdfcomp(list(dist_norm_dt, dist_t_dt), legendtext = key_dt)
-ppcomp(list(dist_norm_dt, dist_t_dt), legendtext = key_dt)
 
 dev.off()
 
