@@ -3,8 +3,8 @@ install.packages("rstudioapi")
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 getwd()
 
-install.packages("ggplot2")
-install.packages("fitdistrplus")
+#install.packages("ggplot2")
+#install.packages("fitdistrplus")
 
 library(ggplot2)
 library(fitdistrplus)
@@ -413,6 +413,7 @@ par(mfrow = c(2, 2))
 denscomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
 qqcomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
 cdfcomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
+ppcomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
 
 dev.off()
 
@@ -439,6 +440,7 @@ par(mfrow = c(2, 2))
 denscomp(list(dist_norm_dt, dist_t_dt), legendtext = key_dt)
 qqcomp(list(dist_norm_dt, dist_t_dt), legendtext = key_dt)
 cdfcomp(list(dist_norm_dt, dist_t_dt), legendtext = key_dt)
+ppcomp(list(dist_norm_nwg, dist_t_nwg), legendtext = key_nwg)
 
 dev.off()
 
@@ -651,9 +653,10 @@ Sigma_ob
 P <- cor(merged_logi) # macierz korelacji
 P
 
-sqrtthing <- sqrt(Sigma[1, 1])
+mala_sigma <- sqrt(Sigma[1, 1])
 
-sqrtthing
+mala_sigma
+
 #-----------------------------------------
 # wykres gestosci
 #-----------------------------------------
